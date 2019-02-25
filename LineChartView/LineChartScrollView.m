@@ -25,18 +25,15 @@
     return self;
 }
 
-//- (void)drawRect:(CGRect)rect {
-//    [self drawXAxis];
-//}
-
 - (void)drawXAxis {        
     //画x轴文本
     for (NSInteger i = 0; i < 30; i++) {
         CGFloat space = 10;
         CGFloat left = 0;
-        CGFloat width = (self.frame.size.width - 20 - 9 * space)/10;
+        CGFloat width = (self.frame.size.width - 20 - 9 * space)/5;
         UILabel *lbl = [[UILabel alloc] initWithFrame:CGRectMake(left + i * (width + space), self.frame.size.height - 35, width, 30)];
         lbl.textColor = [UIColor blackColor];
+        lbl.textAlignment = NSTextAlignmentCenter;
         lbl.text = [NSString stringWithFormat:@"我是第%ld个",i + 1];
         [self addSubview:lbl];
     }        

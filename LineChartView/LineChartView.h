@@ -14,6 +14,7 @@
 @property (nonatomic,assign)CGFloat leftMaxVal;//左边y轴最大值
 @property (nonatomic,assign)CGFloat rightMaxVal;//右边y轴最大值
 @property (nonatomic,assign)CGFloat rightMinVal;//右边y轴最小值
+@property (nonatomic,copy)NSArray *colorsArr;//自定义区间颜色数组
 @property (nonatomic,assign)NSInteger lblCount;
 - (void)drawXAxis;
 - (void)drawYAxis;

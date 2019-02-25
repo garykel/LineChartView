@@ -9,6 +9,15 @@
 #import "LineChartView.h"
 #import "LineChartScrollView.h"
 
+#define scrollView_leftMargin 40 //滚动视图距离左侧边距
+#define scrollView_rightMargin 40 //滚动视图距离右侧边距
+#define scrollView_topMargin 30 //滚动视图距离顶部边距
+#define scrollView_bottomMargin 40 //滚动视图距离底部边距
+#define leftUnit_leftMargin 5 //左侧y轴距离左侧边距
+#define leftUnit_width 40 //左侧y轴宽度
+#define rightUnit_width 60 //右侧y轴宽度
+#define unitLbl_height 20 //单位标签高度
+#define rightUnit_rightMargin 10 //右侧y轴单位标签距离右侧边距
 @interface LineChartView () {
     LineChartScrollView *_scrollView;//折线图区域
 }
@@ -20,8 +29,8 @@
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = [UIColor grayColor];
-        _scrollView = [[LineChartScrollView alloc] initWithFrame:CGRectMake(10, 0, frame.size.width - 2 * 10, frame.size.height)];
-        _scrollView.contentSize = CGSizeMake((frame.size.width - 2 * 10) * 3, frame.size.height);
+        _scrollView = [[LineChartScrollView alloc] initWithFrame:CGRectMake(scrollView_leftMargin, 0, frame.size.width - 2 * scrollView_leftMargin, frame.size.height)];
+        _scrollView.contentSize = CGSizeMake((frame.size.width - 2 * scrollView_leftMargin) * 3, frame.size.height);
         _scrollView.bounces = YES;
         _scrollView.showsHorizontalScrollIndicator = NO;
         [self addSubview:_scrollView];
@@ -33,8 +42,8 @@
 
 - (void)drawXAxis {
     UIBezierPath *xpath = [UIBezierPath bezierPath];
-    [xpath moveToPoint:CGPointMake(10, self.frame.size.height - 40)];
-    [xpath addLineToPoint:CGPointMake(self.frame.size.width - 10, self.frame.size.height - 40)];
+    [xpath moveToPoint:CGPointMake(40, self.frame.size.height - scrollView_leftMargin)];
+    [xpath addLineToPoint:CGPointMake(self.frame.size.width - scrollView_leftMargin, self.frame.size.height - scrollView_leftMargin)];
     
     CAShapeLayer *layer = [[CAShapeLayer alloc] init];
     [layer setPath:xpath.CGPath];
@@ -46,8 +55,8 @@
 - (void)drawYAxis {
     //左侧y轴
     UIBezierPath *leftAxisPath = [UIBezierPath bezierPath];
-    [leftAxisPath moveToPoint:CGPointMake(10, 30)];
-    [leftAxisPath addLineToPoint:CGPointMake(10, self.frame.size.height - 40)];
+    [leftAxisPath moveToPoint:CGPointMake(scrollView_leftMargin, scrollView_topMargin)];
+    [leftAxisPath addLineToPoint:CGPointMake(scrollView_leftMargin, self.frame.size.height - scrollView_leftMargin)];
     CAShapeLayer *leftAxisLayer = [[CAShapeLayer alloc] init];
     [leftAxisLayer setPath:leftAxisPath.CGPath];
     leftAxisLayer.lineWidth = 1;
@@ -56,8 +65,8 @@
     
     //右侧y轴
     UIBezierPath *rightAxisPath = [UIBezierPath bezierPath];
-    [rightAxisPath moveToPoint:CGPointMake(self.frame.size.width - 10, 30)];
-    [rightAxisPath addLineToPoint:CGPointMake(self.frame.size.width - 10, self.frame.size.height - 40)];
+    [rightAxisPath moveToPoint:CGPointMake(self.frame.size.width - scrollView_leftMargin, scrollView_topMargin)];
+    [rightAxisPath addLineToPoint:CGPointMake(self.frame.size.width - scrollView_leftMargin, self.frame.size.height - scrollView_leftMargin)];
     CAShapeLayer *rightAxisLayer = [[CAShapeLayer alloc] init];
     [rightAxisLayer setPath:rightAxisPath.CGPath];
     rightAxisLayer.lineWidth = 1;
@@ -65,7 +74,7 @@
     [self.layer addSublayer:rightAxisLayer];
     
     //左侧y轴单位
-    UILabel *leftUnitLbl = [[UILabel alloc] initWithFrame:CGRectMake(5, 5, 40, 20)];
+    UILabel *leftUnitLbl = [[UILabel alloc] initWithFrame:CGRectMake(leftUnit_leftMargin, 0, leftUnit_width, unitLbl_height)];
     leftUnitLbl.textAlignment = NSTextAlignmentLeft;
     leftUnitLbl.textColor = [UIColor blackColor];
     leftUnitLbl.text = @"bpm";
@@ -73,60 +82,55 @@
     [self addSubview:leftUnitLbl];
     
     //右侧y轴单位
-    UILabel *rightUnitLbl = [[UILabel alloc] initWithFrame:CGRectMake(self.frame.size.width - 5 - 60, 5, 60, 20)];
+    UILabel *rightUnitLbl = [[UILabel alloc] initWithFrame:CGRectMake(self.frame.size.width - leftUnit_leftMargin - rightUnit_width, 0, rightUnit_width, unitLbl_height)];
     rightUnitLbl.textAlignment = NSTextAlignmentRight;
     rightUnitLbl.textColor = [UIColor blackColor];
     rightUnitLbl.text = @"%";
     rightUnitLbl.text = self.rightUnit;
     [self addSubview:rightUnitLbl];
     
-    //y轴顶部分割线
-    UIBezierPath *topLinePath = [UIBezierPath bezierPath];
-    [topLinePath moveToPoint:CGPointMake(10, 30)];
-    [topLinePath addLineToPoint:CGPointMake(self.frame.size.width - 10, 30)];
-    
-    CAShapeLayer *topLineLayer = [[CAShapeLayer alloc] init];
-    [topLineLayer setPath:topLinePath.CGPath];
-    topLineLayer.lineWidth = 1;
-    topLineLayer.strokeColor = [UIColor whiteColor].CGColor;
-    [self.layer addSublayer:topLineLayer];
-    
     for (NSInteger j = 0; j <= self.lblCount; j++) {
-        CGFloat height = (self.frame.size.height - 30 - 40)/6.5;
-        CGFloat left = 5;
-        CGFloat right = self.frame.size.width - left - 40;
+        CGFloat height = (self.frame.size.height - scrollView_topMargin - scrollView_bottomMargin)/6.5;
         NSInteger ySpace = (NSInteger)((self.leftMaxVal - self.leftMaxVal * (self.rightMinVal / 100))/self.lblCount);
-        CGFloat top = 30;
-        UILabel *lbl = [[UILabel alloc] initWithFrame:CGRectMake(left, top + j * height - 5, 40, 30)];
+        if (j < self.lblCount) {
+            UIBezierPath *path = [UIBezierPath bezierPath];
+            [path moveToPoint:CGPointMake(scrollView_leftMargin, scrollView_topMargin + height * j)];
+            [path addLineToPoint:CGPointMake(self.frame.size.width - scrollView_rightMargin, scrollView_topMargin + height * j)];
+            [path addLineToPoint:CGPointMake(self.frame.size.width - scrollView_rightMargin, scrollView_topMargin + (j + 1) * height)];
+            [path addLineToPoint:CGPointMake(scrollView_leftMargin, scrollView_topMargin + (j + 1) * height)];
+            
+            CAShapeLayer *areaLayer = [[CAShapeLayer alloc] init];
+            areaLayer.path = path.CGPath;
+            areaLayer.lineWidth = 1;
+            areaLayer.strokeColor = [UIColor whiteColor].CGColor;
+            UIColor *color = (UIColor*)[self.colorsArr objectAtIndex:j];
+            areaLayer.fillColor = color.CGColor;
+            [self.layer addSublayer:areaLayer];
+        }
+        
+        CGFloat lblLeft = 0;
+        UILabel *lbl = [[UILabel alloc] initWithFrame:CGRectMake(lblLeft, scrollView_topMargin + j * height - unitLbl_height / 2, leftUnit_width, unitLbl_height)];
         lbl.textAlignment = NSTextAlignmentCenter;
         lbl.textColor = [UIColor blackColor];
-        if (j < 6) {
+        lbl.font = [UIFont systemFontOfSize:14.0];
+        if (j < self.lblCount + 1) {
             lbl.text = [NSString stringWithFormat:@"%ld",(long)(self.leftMaxVal - j * ySpace)];
         } else {
             lbl.text = @"";
         }
         [self addSubview:lbl];
         
-        UILabel *rlbl = [[UILabel alloc] initWithFrame:CGRectMake(right, top + j * height - 5, 40, 30)];
+        UILabel *rlbl = [[UILabel alloc] initWithFrame:CGRectMake(self.frame.size.width - scrollView_rightMargin - rightUnit_rightMargin, scrollView_topMargin + j * height - unitLbl_height / 2, rightUnit_width, unitLbl_height)];
         rlbl.textAlignment = NSTextAlignmentCenter;
         rlbl.textColor = [UIColor blackColor];
+        rlbl.font = [UIFont systemFontOfSize:14.0];
         NSInteger space = (NSInteger)((self.rightMaxVal - self.rightMinVal)/self.lblCount);
-        if (j < 6) {
-            rlbl.text = [NSString stringWithFormat:@"%ld",100 - j * space];
+        if (j < self.lblCount + 1) {
+            rlbl.text = [NSString stringWithFormat:@"%ld",(NSInteger)self.rightMaxVal - j * space];
         } else {
             rlbl.text = @"";
         }
         [self addSubview:rlbl];
-        //添加分割线
-        UIBezierPath *seperateLinePath = [UIBezierPath bezierPath];
-        [seperateLinePath moveToPoint:CGPointMake(10, top + (j + 1) * height - 5)];
-        [seperateLinePath addLineToPoint:CGPointMake(self.frame.size.width - 10, top + (j + 1) * height - 8)];
-        
-        CAShapeLayer *seperateLineLayer = [[CAShapeLayer alloc] init];
-        [seperateLineLayer setPath:seperateLinePath.CGPath];
-        [seperateLineLayer setLineWidth:1.0];
-        [seperateLineLayer setStrokeColor:[UIColor whiteColor].CGColor];
-        [self.layer addSublayer:seperateLineLayer];
     }
 }
 

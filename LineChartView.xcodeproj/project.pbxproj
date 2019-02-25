@@ -17,6 +17,7 @@
 		5B70546E221FE32400D543C8 /* LineChartViewUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B70546D221FE32400D543C8 /* LineChartViewUITests.m */; };
 		5B70547D221FE36000D543C8 /* LineChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B70547C221FE36000D543C8 /* LineChartView.m */; };
 		5B705480221FE38D00D543C8 /* LineChartScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B70547F221FE38D00D543C8 /* LineChartScrollView.m */; };
+		5B7054842223BF3E00D543C8 /* UIColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7054832223BF3E00D543C8 /* UIColor+Hex.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,8 @@
 		5B70547C221FE36000D543C8 /* LineChartView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LineChartView.m; sourceTree = "<group>"; };
 		5B70547E221FE38D00D543C8 /* LineChartScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LineChartScrollView.h; sourceTree = "<group>"; };
 		5B70547F221FE38D00D543C8 /* LineChartScrollView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LineChartScrollView.m; sourceTree = "<group>"; };
+		5B7054822223BF3E00D543C8 /* UIColor+Hex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Hex.h"; sourceTree = "<group>"; };
+		5B7054832223BF3E00D543C8 /* UIColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Hex.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +118,7 @@
 				5B70547C221FE36000D543C8 /* LineChartView.m */,
 				5B70547E221FE38D00D543C8 /* LineChartScrollView.h */,
 				5B70547F221FE38D00D543C8 /* LineChartScrollView.m */,
+				5B7054812223BEDD00D543C8 /* Categories */,
 				5B70544F221FE31E00D543C8 /* Main.storyboard */,
 				5B705452221FE32400D543C8 /* Assets.xcassets */,
 				5B705454221FE32400D543C8 /* LaunchScreen.storyboard */,
@@ -140,6 +144,15 @@
 				5B70546F221FE32400D543C8 /* Info.plist */,
 			);
 			path = LineChartViewUITests;
+			sourceTree = "<group>";
+		};
+		5B7054812223BEDD00D543C8 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				5B7054822223BF3E00D543C8 /* UIColor+Hex.h */,
+				5B7054832223BF3E00D543C8 /* UIColor+Hex.m */,
+			);
+			path = Categories;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -273,6 +286,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B705480221FE38D00D543C8 /* LineChartScrollView.m in Sources */,
+				5B7054842223BF3E00D543C8 /* UIColor+Hex.m in Sources */,
 				5B70544E221FE31E00D543C8 /* ViewController.m in Sources */,
 				5B705459221FE32400D543C8 /* main.m in Sources */,
 				5B70544B221FE31E00D543C8 /* AppDelegate.m in Sources */,
