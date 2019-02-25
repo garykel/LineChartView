@@ -34,6 +34,7 @@
         _scrollView.bounces = YES;
         _scrollView.showsHorizontalScrollIndicator = NO;
         [self addSubview:_scrollView];
+        self.datas = [NSMutableArray array];
 //        [self drawXAxis];
 //        [self drawYAxis];
     }
@@ -134,4 +135,25 @@
     }
 }
 
+- (void)drawXY {
+    if (self.datas.count > 0) {
+        UIBezierPath *path = [UIBezierPath bezierPath];
+        for (NSInteger i = 0;i < self.datas.count;i++) {
+            NSDictionary *dict = [self.datas objectAtIndex:i];
+            NSInteger x = [[dict valueForKey:@"x"] integerValue];
+            NSInteger y = [[dict valueForKey:@"y"] integerValue];
+            if (i == 0) {
+                [path moveToPoint:CGPointMake(scrollView_leftMargin + x, scrollView_topMargin + self.leftMaxVal - y)];
+            } else {
+                [path addLineToPoint:CGPointMake(scrollView_leftMargin + x, scrollView_topMargin + self.leftMaxVal - y)];
+            }
+            CAShapeLayer *layer = [[CAShapeLayer alloc] init];
+            layer.path = path.CGPath;
+            layer.lineWidth = 2;
+            layer.strokeColor = [UIColor purpleColor].CGColor;
+            layer.fillColor = [UIColor clearColor].CGColor;
+            [self.layer addSublayer:layer];
+        }
+    }
+}
 @end
