@@ -18,7 +18,7 @@
 #define rightUnit_width 60 //右侧y轴宽度
 #define unitLbl_height 20 //单位标签高度
 #define rightUnit_rightMargin 10 //右侧y轴单位标签距离右侧边距
-@interface LineChartView () {
+@interface LineChartView ()<UIScrollViewDelegate> {
     LineChartScrollView *_scrollView;//折线图区域
 }
 
@@ -33,10 +33,12 @@
         _scrollView.contentSize = CGSizeMake((frame.size.width - 2 * scrollView_leftMargin) * 3, frame.size.height);
         _scrollView.bounces = YES;
         _scrollView.showsHorizontalScrollIndicator = NO;
+        [_scrollView setMinimumZoomScale:0.3];
+        [_scrollView setMaximumZoomScale:2.5];
+        [_scrollView setZoomScale:0.3 animated:YES];
+        _scrollView.delegate = self;
         [self addSubview:_scrollView];
         self.datas = [NSMutableArray array];
-//        [self drawXAxis];
-//        [self drawYAxis];
     }
     return self;
 }
@@ -91,7 +93,7 @@
     [self addSubview:rightUnitLbl];
     
     for (NSInteger j = 0; j <= self.lblCount; j++) {
-        CGFloat height = (self.frame.size.height - scrollView_topMargin - scrollView_bottomMargin)/6.5;
+        CGFloat height = (self.frame.size.height - scrollView_topMargin - scrollView_bottomMargin)/(self.lblCount + 1.2);
         NSInteger ySpace = (NSInteger)((self.leftMaxVal - self.leftMaxVal * (self.rightMinVal / 100))/self.lblCount);
         if (j < self.lblCount) {
             UIBezierPath *path = [UIBezierPath bezierPath];
@@ -137,23 +139,49 @@
 
 - (void)drawXY {
     if (self.datas.count > 0) {
-        UIBezierPath *path = [UIBezierPath bezierPath];
         for (NSInteger i = 0;i < self.datas.count;i++) {
-            NSDictionary *dict = [self.datas objectAtIndex:i];
-            NSInteger x = [[dict valueForKey:@"x"] integerValue];
-            NSInteger y = [[dict valueForKey:@"y"] integerValue];
-            if (i == 0) {
-                [path moveToPoint:CGPointMake(scrollView_leftMargin + x, scrollView_topMargin + self.leftMaxVal - y)];
-            } else {
-                [path addLineToPoint:CGPointMake(scrollView_leftMargin + x, scrollView_topMargin + self.leftMaxVal - y)];
+            NSMutableArray *datas = [self.datas objectAtIndex:i];
+            if (datas.count > 0) {
+                UIBezierPath *path = [UIBezierPath bezierPath];
+                for (NSInteger j = 0; j < datas.count; j++) {
+                    NSDictionary *dict = [datas objectAtIndex:j];
+                    NSInteger x = [[dict valueForKey:@"x"] integerValue];
+                    NSInteger y = [[dict valueForKey:@"y"] integerValue];
+                    CGFloat minEffectiveVal = self.leftMaxVal * (self.rightMinVal / 100);//左侧最小有效值
+                    CGFloat height = (self.frame.size.height - scrollView_topMargin - scrollView_bottomMargin)/(self.lblCount + 1.2); //等分区域每一小格高度
+                    if (y >= minEffectiveVal) {
+                        NSInteger dialNum = (NSInteger)((self.leftMaxVal - self.leftMaxVal * (self.rightMinVal / 100))/self.lblCount); //等分区域每一小格刻度数
+                        CGFloat dialHeigh = height / dialNum;//等分区域每一小刻度高度
+                        if (j == 0) {
+                            [path moveToPoint:CGPointMake(scrollView_leftMargin + x, scrollView_topMargin + (self.leftMaxVal - y) * dialHeigh + 0.5)];
+                        } else {
+                            [path addLineToPoint:CGPointMake(scrollView_leftMargin + x, scrollView_topMargin + (self.leftMaxVal - y) * dialHeigh + 0.5 * (NSInteger)((self.leftMaxVal - y) / height))];
+                        }
+                    } else {
+                        CGFloat invalidDataHeight = 1.2 * height; //非等分区域每一小格高度
+                        NSInteger dialNum = (NSInteger)(self.leftMaxVal * (self.rightMinVal / 100)); //等分区域每一小格刻度数
+                        CGFloat leftMinVal = self.leftMaxVal - self.leftMaxVal * (self.rightMinVal / 100);
+                        CGFloat dialHeigh = invalidDataHeight / dialNum;
+                        if (j == 0) {
+                            [path moveToPoint:CGPointMake(scrollView_leftMargin + x, scrollView_topMargin + height * self.lblCount + (leftMinVal - y) * dialHeigh - 6)];
+                        } else {
+                            [path addLineToPoint:CGPointMake(scrollView_leftMargin + x, scrollView_topMargin +  height * self.lblCount + (leftMinVal - y) * dialHeigh - 6)];
+                        }
+                    }
+                    CAShapeLayer *layer = [[CAShapeLayer alloc] init];
+                    layer.path = path.CGPath;
+                    layer.lineWidth = 2;
+                    if (self.linesColorArr.count > 0) {
+                        UIColor *strokeColor = (UIColor*)[self.linesColorArr objectAtIndex:i];
+                        layer.strokeColor = strokeColor.CGColor;
+                    }                    
+                    layer.fillColor = [UIColor clearColor].CGColor;
+                    [self.layer addSublayer:layer];
+                }
             }
-            CAShapeLayer *layer = [[CAShapeLayer alloc] init];
-            layer.path = path.CGPath;
-            layer.lineWidth = 2;
-            layer.strokeColor = [UIColor purpleColor].CGColor;
-            layer.fillColor = [UIColor clearColor].CGColor;
-            [self.layer addSublayer:layer];
         }
     }
 }
+
+
 @end
